@@ -8,6 +8,8 @@ export function NavbarFeat() {
 
   const { user, theme } = useGlobalStore();
 
+  console.log('pepe');
+
   // Initialize and cleanup event listeners
   useEffect(() => {
     initializeEventListeners();
