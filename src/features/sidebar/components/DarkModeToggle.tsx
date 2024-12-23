@@ -12,10 +12,7 @@ export function DarkModeToggle({ isDarkSidebar, onToggle }: DarkModeToggleProps)
         relative 
         cursor-pointer 
         transition-colors 
-        ${isDarkSidebar
-          ? 'bg-blue-700'
-          : 'bg-gray-300'
-        }
+        ${isDarkSidebar ? 'bg-blue-700' : 'bg-gray-300'}
       `}
       onClick={onToggle}
     >
@@ -28,10 +25,7 @@ export function DarkModeToggle({ isDarkSidebar, onToggle }: DarkModeToggleProps)
           rounded-full 
           shadow-md 
           transition-transform 
-          ${isDarkSidebar
-            ? 'translate-x-8'
-            : 'translate-x-1'
-          }
+          ${isDarkSidebar ? 'translate-x-8' : 'translate-x-1'}
         `}
       />
     </div>

@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 /**
  * Componente de Página de Misión
@@ -10,10 +10,11 @@ const MisionPage: React.FC = () => {
     <div>
       <h1 className="text-2xl font-bold mb-4 text-blue-600">Nuestra Misión</h1>
       <p className="text-gray-700">
-        Proporcionar soluciones innovadoras y de alta calidad que satisfagan las necesidades de nuestros clientes, generando valor y promoviendo el desarrollo continuo.
+        Proporcionar soluciones innovadoras y de alta calidad que satisfagan las necesidades de
+        nuestros clientes, generando valor y promoviendo el desarrollo continuo.
       </p>
     </div>
-  )
-}
+  );
+};
 
-export default MisionPage
+export default MisionPage;

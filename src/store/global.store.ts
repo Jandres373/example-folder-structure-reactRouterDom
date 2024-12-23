@@ -1,106 +1,46 @@
 import { create } from 'zustand';
-import { EventType, GlobalEvent } from './events';
+import { mountStoreDevtool } from 'simple-zustand-devtools';
 
-// Tipos de manejadores de eventos
-type EventHandler = (event: GlobalEvent) => void;
-
-// Registro de eventos por feature y tipo
-type EventRegistry = {
-  [feature: string]: {
-    [eventType: string]: EventHandler[];
-  };
-};
-
-interface GlobalState {
-  // Registro de eventos
-  eventRegistry: EventRegistry;
-
-  // Registrar un evento
-  registerEvent: (
-    feature: string,
-    eventType: EventType,
-    handler: EventHandler
-  ) => void;
-
-  // Desregistrar un evento
-  unregisterEvent: (
-    feature: string,
-    eventType: EventType,
-    handler?: EventHandler
-  ) => void;
-
-  // Disparar un evento
-  dispatch: (event: GlobalEvent) => void;
+interface User {
+  id: string;
+  name: string;
+  role: string;
 }
 
-export const useGlobalStore = create<GlobalState>((set, get) => ({
+interface GlobalState {
+  // Auth state
+  user: User | null;
+  isAuthenticated: boolean;
+  accessToken: string | null;
 
-  // Registro inicial de eventos vacío
-  eventRegistry: {},
+  // UI state
+  isLoading: boolean;
+  theme: 'light' | 'dark';
 
-  // Registrar un nuevo evento
-  registerEvent: (feature, eventType, handler) => {
-    set((state) => {
-      const registry = { ...state.eventRegistry };
+  // Actions
+  setAuth: (isAuthenticated: boolean, user?: User | null, token?: string | null) => void;
+  setLoading: (loading: boolean) => void;
+  setTheme: (theme: 'light' | 'dark') => void;
+}
 
-      // Crear feature si no existe
-      if (!registry[feature]) {
-        registry[feature] = {};
-      }
+export const useGlobalStore = create<GlobalState>((set) => ({
+  // Initial state
+  isAuthenticated: false,
+  user: null,
+  accessToken: null,
+  isLoading: false,
+  theme: 'light',
 
-      // Crear tipo de evento si no existe
-      if (!registry[feature][eventType]) {
-        registry[feature][eventType] = [];
-      }
+  // Actions
+  setAuth: (isAuthenticated, user = null, token = null) =>
+    set({ isAuthenticated, user, accessToken: token }),
 
-      // Añadir handler si no existe
-      if (!registry[feature][eventType].includes(handler)) {
-        registry[feature][eventType].push(handler);
-      }
+  setLoading: (loading) => set({ isLoading: loading }),
 
-      return { eventRegistry: registry };
-    });
-  },
-
-  // Desregistrar un evento
-  unregisterEvent: (feature, eventType, handler) => {
-    set((state) => {
-      const registry = { ...state.eventRegistry };
-
-      // Si no existe el feature o el tipo de evento, no hacer nada
-      if (!registry[feature] || !registry[feature][eventType]) {
-        return state;
-      }
-
-      // Si no se proporciona handler, eliminar todos los handlers
-      if (!handler) {
-        delete registry[feature][eventType];
-        return { eventRegistry: registry };
-      }
-
-      // Filtrar el handler específico
-      registry[feature][eventType] = registry[feature][eventType]
-        .filter(h => h !== handler);
-
-      return { eventRegistry: registry };
-    });
-  },
-
-  // Disparar un evento a todos los handlers registrados
-  dispatch: (event) => {
-    const { eventRegistry } = get();
-
-    // Buscar handlers para este tipo de evento
-    Object.keys(eventRegistry).forEach(feature => {
-      if (eventRegistry[feature][event.type]) {
-        eventRegistry[feature][event.type].forEach(handler => {
-          try {
-            handler(event);
-          } catch (error) {
-            console.error(`Error en handler de evento ${event.type}:`, error);
-          }
-        });
-      }
-    });
-  }
+  setTheme: (theme) => set({ theme }),
 }));
+
+// Only mount devtools in development
+if (import.meta.env.DEV && import.meta.env.VITE_APP_DEBUG === 'true') {
+  mountStoreDevtool('GlobalStore', useGlobalStore);
+}
